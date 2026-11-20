@@ -1,0 +1,657 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>UNSRAT Travel | Apriori Analytics</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+
+<body>
+
+<!-- ===================================== -->
+<!-- NAVBAR -->
+<!-- ===================================== -->
+
+<nav class="navbar navbar-expand-lg navbar-dark topbar">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/">
+      ✈ UNSRAT TRAVEL ANALYTICS
+    </a>
+
+    <span class="navbar-text text-white-50 small">
+      DATA MINING · APRIORI
+    </span>
+  </div>
+</nav>
+
+<!-- ===================================== -->
+<!-- HERO -->
+<!-- ===================================== -->
+
+<header class="hero">
+  <div class="container py-5">
+
+    <div class="eyebrow">
+      SISTEM ANALISIS POLA KUNJUNGAN WISATA
+    </div>
+
+    <h1>
+      Temukan Pola Kota<br>
+      <span>Wisata Favorit</span>
+    </h1>
+
+    <p class="lead">
+      Analisis paket wisata menggunakan Algoritma Apriori
+      untuk menemukan kombinasi kota yang sering dikunjungi bersama.
+    </p>
+
+    <a href="#analisis" class="btn btn-light btn-lg mt-2">
+      Mulai Analisis ↓
+    </a>
+
+  </div>
+</header>
+
+<!-- ===================================== -->
+<!-- KONTEN UTAMA -->
+<!-- ===================================== -->
+
+<main class="container py-4">
+
+  <!-- =================================== -->
+  <!-- STATISTIK DATASET -->
+  <!-- =================================== -->
+
+  <section class="row g-3 mb-4">
+
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-label">Total Transaksi</div>
+        <div class="stat-value">
+          {{ transactions|length }}
+        </div>
+        <div class="stat-note">Paket wisata</div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-label">Kota Unik</div>
+        <div class="stat-value">
+          {{ city_count }}
+        </div>
+        <div class="stat-note">Destinasi Eropa</div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-label">Minimum Support</div>
+        <div class="stat-value">30%</div>
+        <div class="stat-note">Pengaturan awal</div>
+      </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+      <div class="stat-card">
+        <div class="stat-label">Minimum Confidence</div>
+        <div class="stat-value">80%</div>
+        <div class="stat-note">Pengaturan awal</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =================================== -->
+  <!-- DATA PAKET WISATA -->
+  <!-- =================================== -->
+
+  <section class="panel mb-4">
+
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow dark">DATASET</div>
+        <h2>Data Paket Wisata</h2>
+      </div>
+
+      <span class="pill">8 transaksi</span>
+    </div>
+
+    <div class="table-responsive">
+
+      <table class="table align-middle">
+
+        <thead>
+          <tr>
+            <th>Paket</th>
+            <th>Kota yang Dikunjungi</th>
+            <th>Jumlah Kota</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {% for name, cities in transactions.items() %}
+
+          <tr>
+            <td>
+              <span class="package-tag">
+                {{ name }}
+              </span>
+            </td>
+
+            <td>
+              {{ cities|join(', ') }}
+            </td>
+
+            <td>
+              {{ cities|length }}
+            </td>
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+  <!-- =================================== -->
+  <!-- PARAMETER APRIORI -->
+  <!-- =================================== -->
+
+  <section class="panel mb-4" id="analisis">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="eyebrow dark">PARAMETER</div>
+
+        <h2>Pengaturan Apriori</h2>
+
+        <p class="muted mb-0">
+          Ubah nilai minimum support dan confidence,
+          lalu jalankan perhitungan.
+        </p>
+      </div>
+
+    </div>
+
+    <form method="POST" class="row g-3 align-items-end">
+
+      <div class="col-md-4">
+
+        <label class="form-label fw-semibold">
+          Minimum Support (%)
+        </label>
+
+        <input
+          class="form-control form-control-lg"
+          type="number"
+          name="min_support"
+          min="1"
+          max="100"
+          step="1"
+          value="{{ (min_support*100)|round|int }}"
+          required
+        >
+
+      </div>
+
+      <div class="col-md-4">
+
+        <label class="form-label fw-semibold">
+          Minimum Confidence (%)
+        </label>
+
+        <input
+          class="form-control form-control-lg"
+          type="number"
+          name="min_confidence"
+          min="1"
+          max="100"
+          step="1"
+          value="{{ (min_confidence*100)|round|int }}"
+          required
+        >
+
+      </div>
+
+      <div class="col-md-4">
+
+        <button
+          class="btn btn-primary btn-lg w-100"
+          type="submit"
+        >
+          ▶ Jalankan Algoritma Apriori
+        </button>
+
+      </div>
+
+    </form>
+
+    {% if error %}
+
+    <div class="alert alert-danger mt-3 mb-0">
+      {{ error }}
+    </div>
+
+    {% endif %}
+
+  </section>
+
+  <!-- =================================== -->
+  <!-- HASIL ANALISIS -->
+  <!-- =================================== -->
+
+  {% if analyzed %}
+
+  <section class="panel mb-4">
+
+    <div class="section-heading">
+
+      <div>
+        <div class="eyebrow dark">HASIL PERHITUNGAN</div>
+        <h2>Ringkasan Analisis</h2>
+      </div>
+
+      <a
+        class="btn btn-outline-primary"
+        href="{{ url_for('export_csv', support=min_support, confidence=min_confidence) }}"
+      >
+        ⬇ Export CSV
+      </a>
+
+    </div>
+
+    <div class="row g-3">
+
+      <div class="col-6 col-lg-3">
+        <div class="result-stat">
+          <span>Minimum support count</span>
+          <strong>{{ min_count }}</strong>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="result-stat">
+          <span>Level itemset</span>
+          <strong>{{ levels|length }}</strong>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="result-stat">
+          <span>Frequent itemset</span>
+          <strong>{{ frequent_count }}</strong>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="result-stat">
+          <span>Association rule</span>
+          <strong>{{ rules|length }}</strong>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="muted small mt-3 mb-0">
+      Minimum support count dihitung dengan pembulatan ke atas
+      dari minimum support × jumlah transaksi.
+    </p>
+
+  </section>
+
+  <!-- =================================== -->
+  <!-- KANDIDAT DAN FREQUENT ITEMSET -->
+  <!-- =================================== -->
+
+  <section class="panel mb-4">
+
+    <div class="eyebrow dark">
+      PROSES APRIORI
+    </div>
+
+    <h2 class="mb-3">
+      Kandidat dan Frequent Itemset
+    </h2>
+
+    <p class="muted">
+      Ck adalah seluruh kandidat pada iterasi ke-k,
+      sedangkan Lk adalah kandidat yang memenuhi minimum support.
+    </p>
+
+    {% for level in levels %}
+
+    <div class="level-block">
+
+      <div class="level-title">
+
+        <h3>
+          C{{ level.k }} — Kandidat {{ level.k }}-Itemset
+        </h3>
+
+        <span class="pill">
+          {{ level.candidates|length }} kandidat
+        </span>
+
+      </div>
+
+      <div class="table-responsive">
+
+        <table class="table table-sm table-hover">
+
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Kombinasi Kota</th>
+              <th>Jumlah</th>
+              <th>Support</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {% for row in level.candidates %}
+
+            <tr>
+
+              <td>{{ loop.index }}</td>
+
+              <td>
+                {{ row['items']|join(' + ') }}
+              </td>
+
+              <td>
+                {{ row['count'] }}
+              </td>
+
+              <td>
+                {{ '%.2f'|format(row['support']*100) }}%
+              </td>
+
+              <td>
+
+                {% if row['frequent'] %}
+
+                <span class="status-pass">
+                  Lolos
+                </span>
+
+                {% else %}
+
+                <span class="status-fail">
+                  Tidak lolos
+                </span>
+
+                {% endif %}
+
+              </td>
+
+            </tr>
+
+            {% endfor %}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div class="frequent-box">
+
+        <strong>
+          L{{ level.k }} — Frequent {{ level.k }}-Itemset
+          ({{ level.frequent|length }})
+        </strong>
+
+        {% if level.frequent %}
+
+        <div class="chips">
+
+          {% for row in level.frequent %}
+
+          <span class="chip">
+            {{ row['items']|join(' + ') }}
+
+            <b>
+              {{ '%.1f'|format(row['support']*100) }}%
+            </b>
+          </span>
+
+          {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p class="muted mb-0 mt-2">
+          Tidak ada itemset yang memenuhi minimum support.
+        </p>
+
+        {% endif %}
+
+      </div>
+
+    </div>
+
+    {% endfor %}
+
+  </section>
+
+  <!-- =================================== -->
+  <!-- ASSOCIATION RULES -->
+  <!-- =================================== -->
+
+  <section class="panel mb-4">
+
+    <div class="section-heading">
+
+      <div>
+
+        <div class="eyebrow dark">
+          POLA KUNJUNGAN
+        </div>
+
+        <h2>Association Rules</h2>
+
+        <p class="muted mb-0">
+          Aturan yang memenuhi minimum confidence
+          {{ (min_confidence*100)|round|int }}%.
+        </p>
+
+      </div>
+
+    </div>
+
+    {% if rules %}
+
+    <div class="table-responsive">
+
+      <table class="table align-middle">
+
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Jika mengunjungi (Antecedent)</th>
+            <th>Maka mengunjungi (Consequent)</th>
+            <th>Support</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {% for rule in rules %}
+
+          <tr>
+
+            <td>{{ loop.index }}</td>
+
+            <td>
+              {{ rule['antecedent']|join(' + ') }}
+            </td>
+
+            <td class="fw-semibold text-primary">
+              {{ rule['consequent']|join(' + ') }}
+            </td>
+
+            <td>
+              {{ '%.2f'|format(rule['support']*100) }}%
+            </td>
+
+            <td>
+              <span class="confidence">
+                {{ '%.2f'|format(rule['confidence']*100) }}%
+              </span>
+            </td>
+
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+      Tidak ditemukan aturan asosiasi yang memenuhi nilai
+      minimum confidence. Coba turunkan parameter confidence.
+    </div>
+
+    {% endif %}
+
+  </section>
+
+  <!-- =================================== -->
+  <!-- REKOMENDASI PAKET -->
+  <!-- =================================== -->
+
+  <section class="panel recommendation">
+
+    <div class="eyebrow dark">
+      REKOMENDASI PAKET
+    </div>
+
+    <h2>Rekomendasi Berdasarkan Pola</h2>
+
+    {% set largest = namespace(row=None, size=0) %}
+
+    {% for level in levels %}
+
+      {% for row in level.frequent %}
+
+        {% if row['items']|length > largest.size %}
+
+          {% set largest.row = row %}
+          {% set largest.size = row['items']|length %}
+
+        {% endif %}
+
+      {% endfor %}
+
+    {% endfor %}
+
+    {% if largest.row %}
+
+    <p>
+      Kombinasi kota dengan jumlah anggota terbanyak
+      yang memenuhi minimum support:
+    </p>
+
+    <div class="recommend-cities">
+
+      {% for city in largest.row['items'] %}
+
+      <span>{{ city }}</span>
+
+      {% endfor %}
+
+    </div>
+
+    <div class="recommend-meta">
+
+      Support:
+
+      <strong>
+        {{ '%.2f'|format(largest.row['support']*100) }}%
+      </strong>
+
+      · Muncul pada
+      {{ largest.row['count'] }}
+      dari
+      {{ transactions|length }}
+      paket wisata.
+
+    </div>
+
+    {% else %}
+
+    <p class="muted">
+      Belum ada kombinasi kota yang memenuhi minimum support.
+    </p>
+
+    {% endif %}
+
+    <p class="small muted mt-3 mb-0">
+      Rekomendasi ini merupakan pola dari dataset yang tersedia,
+      bukan jaminan perilaku pelanggan di masa mendatang.
+    </p>
+
+  </section>
+
+  {% else %}
+
+  <!-- =================================== -->
+  <!-- TAMPILAN SEBELUM ANALISIS -->
+  <!-- =================================== -->
+
+  <section class="empty-state mb-4">
+
+    <div class="empty-icon">⌁</div>
+
+    <h3>Hasil analisis akan tampil di sini</h3>
+
+    <p class="mb-0">
+      Tekan tombol “Jalankan Algoritma Apriori”
+      untuk memproses data paket wisata.
+    </p>
+
+  </section>
+
+  {% endif %}
+
+</main>
+
+<!-- ===================================== -->
+<!-- FOOTER -->
+<!-- ===================================== -->
+
+<footer class="footer">
+
+  <div class="container">
+    UNSRAT Travel Analytics · Implementasi Algoritma Apriori dengan Python Flask
+  </div>
+
+</footer>
+
+</body>
+</html>
